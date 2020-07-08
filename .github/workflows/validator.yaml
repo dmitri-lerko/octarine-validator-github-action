@@ -8,7 +8,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       OCTARINE_ACCOUNT: ${{ secrets.OCTARINE_ACCOUNT }}
       OCTARINE_SESSION_ID: ${{ secrets.OCTARINE_SESSION_ID }}
-      OCTARINE_SESSION_ACCESSJWT: ${{ OCTARINE_SESSION_ACCESSJWT }}
+      OCTARINE_SESSION_ACCESSJWT: ${{ secrets.OCTARINE_SESSION_ACCESSJWT }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
