@@ -1,9 +1,7 @@
 name: validator
 
-on:
-  pull_request:
-    branches:
-      - master
+on: push
+
 jobs:
   conftest:
     env:
