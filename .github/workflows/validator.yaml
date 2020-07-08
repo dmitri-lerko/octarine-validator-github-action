@@ -1,0 +1,43 @@
+name: validator
+
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  conftest:
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OCTARINE_ACCOUNT: ${{ secrets.OCTARINE_ACCOUNT }}
+      OCTARINE_SESSION_ID: ${{ secrets.OCTARINE_SESSION_ID }}
+      OCTARINE_SESSION_ACCESSJWT: ${{ OCTARINE_SESSION_ACCESSJWT }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        overlay: [kube-prometheus]
+
+    steps:
+      - name: Get binaries if not cached
+        run: |
+          mkdir ~/bin
+          wget -cO - https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.5.4/kustomize_v3.5.4_linux_amd64.tar.gz > kustomize.tar.gz
+          tar xzf kustomize.tar.gz && mv kustomize ~/bin
+
+      - run: sudo ln -s ~/bin/kustomize /usr/local/bin/kustomize
+
+      - name: Checkout Flux
+        uses: actions/checkout@v2
+      - name: Generate Yaml
+        id: generate-yaml
+        continue-on-error: true
+        run: |
+          mkdir ${{ matrix.overlay }}
+          kustomize build overlays/${{ matrix.overlay }} > ${{ matrix.overlay }}/${{ matrix.overlay }}.yaml
+      - name: Octarine Validator
+        id: validator
+        uses: docker://octarinesec/validator:0.17
+        env:
+          OBJECT_DIR: ${{ matrix.overlay }}
+          OCTARINE_ACCOUNT: $OCTARINE_ACCOUNT
+          OCTARINE_SESSION_ID: $OCTARINE_SESSION_ID
+          OCTARINE_SESSION_ACCESSJWT: $OCTARINE_SESSION_ACCESSJWT
