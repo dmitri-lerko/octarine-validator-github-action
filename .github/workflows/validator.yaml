@@ -3,7 +3,7 @@ name: validator
 on: push
 
 jobs:
-  conftest:
+  octarine-validator:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       OCTARINE_ACCOUNT: ${{ secrets.OCTARINE_ACCOUNT }}
